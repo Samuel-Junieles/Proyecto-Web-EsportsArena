@@ -11,4 +11,22 @@
     <ProjectReference Include="..\EsportsArena.Logic\EsportsArena.Logic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Equipos\" />
+    <Folder Include="Views\Encuentros\" />
+    <Folder Include="Views\Reportes\" />
+    <Folder Include="Views\Torneos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>

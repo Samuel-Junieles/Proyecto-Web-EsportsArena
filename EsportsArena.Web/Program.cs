@@ -1,10 +1,33 @@
-using EsportsArena.Data;
+using EsportsArena.Data.Context;
+using EsportsArena.Data.DAO;
+using EsportsArena.Data.Interface;
+using EsportsArena.Logic.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllersWithViews();
+
+// Configuración del GenericDAO
+builder.Services.AddScoped(typeof(IGenericDAO<>), typeof(GenericDAO<>));
+
+// Registro de los Servicios de Lógica
+builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<EncuentroService>();
+
+// Habilitar Sesiones para el Login
+builder.Services.AddSession();
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60); 
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddControllersWithViews();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -18,9 +41,10 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseSession();
 
 app.UseHttpsRedirection();
 app.UseRouting();
@@ -31,8 +55,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 //Prueba de que XAMPP y MySQL estén conectados correctamente al proyecto.
 using (var scope = app.Services.CreateScope())
@@ -40,7 +63,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<EsportsArena.Data.AppDbContext>();
+        var context = services.GetRequiredService<EsportsArena.Data.Context.AppDbContext>();
         // Esta línea intenta abrir la conexión con XAMPP
         if (context.Database.CanConnect())
         {

@@ -3,84 +3,101 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>eSports Arena Manager</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - eSports Arena</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         :root {
-            --primary-glow: #007bff;
-            --secondary-glow: #6610f2;
-            --dark-bg: #0b0e14;
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --sidebar-bg: #0b0e14;
+            --main-bg: #12171e;
+            --accent: #007bff;
         }
 
         body {
-            background-color: var(--dark-bg);
-            color: #e0e0e0;
-            font-family: 'Roboto', sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: var(--main-bg);
+            color: white;
+            margin: 0;
+            overflow-x: hidden;
         }
 
-        h1, h2, h3, .navbar-brand {
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        /* Sidebar Lateral Izquierdo */
+        #sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid #2d333b;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            transition: all 0.3s;
         }
 
-        .navbar {
-            background: rgba(11, 14, 20, 0.8) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 123, 255, 0.3);
-            padding: 1rem 0;
+        /* Contenido Principal */
+        #main-wrapper {
+            flex-grow: 1;
+            margin-left: 280px;
+            padding: 20px;
+            width: calc(100% - 280px);
         }
 
-        .navbar-brand {
-            color: var(--primary-glow) !important;
-            text-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        .nav-link {
+            color: #8b949e;
+            font-size: 0.95rem;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 10px;
+            transition: 0.2s;
         }
 
-        .stat-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-            .stat-card:hover {
-                transform: translateY(-10px);
-                border-color: var(--primary-glow);
-                box-shadow: 0 10px 30px rgba(0, 123, 255, 0.2);
+            .nav-link:hover {
+                color: white;
+                background: rgba(255,255,255,0.05);
             }
 
-        .stat-number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--primary-glow);
-        }
+            .nav-link.active {
+                color: white;
+                background: var(--accent);
+                font-weight: bold;
+            }
+
+            .nav-link i {
+                margin-right: 10px;
+            }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">eSports Arena</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Equipos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Torneos</a></li>
-                    <li class="nav-item ms-lg-3">
-                        <a class="btn btn-outline-primary shadow-sm" href="#">LOGIN</a>
-                    </li>
-                </ul>
+
+    <nav id="sidebar">
+        <div class="p-4">
+            <h4 class="text-primary fw-bold"><i class="bi bi-controller"></i> ARENA MANAGER</h4>
+        </div>
+
+        <div class="flex-column nav nav-pills">
+            <a class="nav-link" asp-controller="Home" asp-action="Index"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="nav-link" asp-controller="Usuarios" asp-action="Index"><i class="bi bi-people"></i> Usuarios</a>
+            <a class="nav-link" asp-controller="Equipos" asp-action="Index"><i class="bi bi-shield-shaded"></i> Equipos</a>
+            <a class="nav-link" asp-controller="Encuentros" asp-action="Index"><i class="bi bi-controller"></i> Encuentros</a>
+            <a class="nav-link" asp-controller="Torneos" asp-action="Index"><i class="bi bi-trophy"></i> Torneos</a>
+            <a class="nav-link" asp-controller="Reportes" asp-action="Index"><i class="bi bi-file-earmark-pdf"></i> Reportes</a>
+        </div>
+
+        <div class="mt-auto p-3 border-top border-secondary">
+            <div class="d-flex align-items-center">
+                <div class="ms-2">
+                    <p class="mb-0 small text-muted">Sesión iniciada:</p>
+                    <strong class="text-info">@Context.Session.GetString("UsuarioLogueado")</strong>
+                </div>
             </div>
+            <a asp-controller="Login" asp-action="Salir" class="btn btn-outline-danger btn-sm w-100 mt-2">Cerrar Sesión</a>
         </div>
     </nav>
 
-    <div class="container mt-5">
-        @RenderBody()
+    <div id="main-wrapper">
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
