@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EsportsArena.Entities.Models
 {
@@ -11,14 +10,15 @@ namespace EsportsArena.Entities.Models
         public int Id { get; set; }
 
         [Required]
-        public string Nombre { get; set; }
+        public string NombreCompleto { get; set; }
 
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } 
+        public string Telefono { get; set; }
 
-        public DateTime FechaRegistro { get; set; } = DateTime.Now;
+        // Relación One-to-One con Usuario
+        public int UsuarioId { get; set; }
+        [ForeignKey("UsuarioId")]
+        public virtual Usuario Usuario { get; set; }
 
-        public virtual required ICollection<Equipo> Equipos { get; set; }
+        public virtual ICollection<Equipo> Equipos { get; set; }
     }
 }

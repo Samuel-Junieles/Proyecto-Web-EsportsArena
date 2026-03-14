@@ -1,0 +1,29 @@
+﻿@model EsportsArena.Entities.Models.Usuario
+
+<div class="container mt-5">
+    <div class="card shadow-lg bg-dark text-white border-primary">
+        <div class="card-header border-primary">
+            <h3 class="text-center">REGISTRO DE NUEVO USUARIO</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Crear" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Nombre de Usuario</label>
+                    <input asp-for="Username" class="form-control bg-secondary text-white border-0" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Correo Electrónico</label>
+                    <input asp-for="Email" type="email" class="form-control bg-secondary text-white border-0" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contraseña</label>
+                    <input name="passwordNormal" type="password" class="form-control bg-secondary text-white border-0" required />
+                    <small class="text-info">La contraseña será encriptada con SHA256 automáticamente.</small>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary fw-bold">CREAR USUARIO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

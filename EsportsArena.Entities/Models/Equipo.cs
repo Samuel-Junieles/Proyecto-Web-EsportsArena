@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
 
 namespace EsportsArena.Entities.Models
 {
@@ -10,15 +10,13 @@ namespace EsportsArena.Entities.Models
         public int Id { get; set; }
 
         [Required]
-        public string Nombre { get; set; }
+        public string NombreEquipo { get; set; }
 
-        [ForeignKey("Capitan")]
+        [Required]
+        public string JuegoPrincipal { get; set; } // PC o Móvil
+
         public int CapitanId { get; set; }
-
+        [ForeignKey("CapitanId")]
         public virtual Capitan Capitan { get; set; }
-
-        public DateTime FechaRegistro { get; set; } = DateTime.Now;
-
-        public virtual ICollection<Resultado> Resultados { get; set; }
     }
 }
