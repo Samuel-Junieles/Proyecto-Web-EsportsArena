@@ -13,22 +13,30 @@ namespace EsportsArena.Logic.Services
             _encuentroDAO = encuentroDAO;
         }
 
-        public void InscribirEnTorneo(int equipoId, string nombreTorneo)
+        public Encuentro ObtenerPorId(int id)
         {
-            string[] opciones = { "Ganó", "Perdió", "Empate" };
-            Random ran = new Random();
+            return _encuentroDAO.ObtenerPorId(id);
+        }
 
-            var nuevoEncuentro = new Encuentro
-            {
-                EquipoId = equipoId,
-                NombreTorneo = nombreTorneo,
-                ResultadoRandom = opciones[ran.Next(opciones.Length)],
-                FechaEncuentro = DateTime.Now,
-                PremioAcumulado = (decimal)(ran.NextDouble() * 1000) // Simulación de premio
-            };
+        public void Actualizar(Encuentro encuentro)
+        {
+            _encuentroDAO.Actualizar(encuentro);
+            _encuentroDAO.Guardar(); // Para que el resultado del Random se guarde en MySQL
+        }
 
-            _encuentroDAO.Insertar(nuevoEncuentro);
+        public void Guardar(Encuentro encuentro)
+        {
+            if (string.IsNullOrEmpty(encuentro.Estado))
+                encuentro.Estado = "Pendiente";
+
+            _encuentroDAO.Insertar(encuentro);
             _encuentroDAO.Guardar();
+        }
+
+        public IEnumerable<Encuentro> ObtenerTodos()
+        {
+            // Traemos todos los encuentros registrados en MySQL
+            return _encuentroDAO.ObtenerTodos();
         }
     }
 }

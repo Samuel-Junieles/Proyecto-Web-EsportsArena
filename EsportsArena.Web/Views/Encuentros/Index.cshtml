@@ -1,0 +1,55 @@
+﻿@model IEnumerable<EsportsArena.Entities.Models.Encuentro>
+@{
+    // Recuperamos la lista que enviamos desde el controlador
+    var listaEquipos = ViewBag.Equipos as List<EsportsArena.Entities.Models.Equipo> ?? new List<EsportsArena.Entities.Models.Equipo>();
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning fw-bold">ENCUENTROS PROGRAMADOS</h2>
+        <a asp-action="Registrar" class="btn btn-warning fw-bold">NUEVO DUELO</a>
+    </div>
+
+    <div class="row">
+        @foreach (var encuentro in Model)
+        {
+            // Buscamos los nombres de los equipos en la lista que ya tenemos en memoria
+            var e1 = listaEquipos.FirstOrDefault(e => e.Id == encuentro.Equipo1Id);
+            var e2 = listaEquipos.FirstOrDefault(e => e.Id == encuentro.Equipo2Id);
+
+            <div class="col-md-6 mb-3">
+                <div class="card bg-dark border-warning shadow-lg">
+                    <div class="card-body d-flex justify-content-around align-items-center">
+                        <div class="text-center">
+                            <img src="/Images/LogoDefault.png" width="50" class="rounded-circle border border-info">
+                            <p class="mb-0 fw-bold text-white">@(e1?.NombreEquipo ?? "Desconocido")</p>
+                        </div>
+
+                        <div class="text-center">
+                            <h3 class="text-danger fw-bold mb-0">VS</h3>
+                            <small class="text-muted">@encuentro.FechaEncuentro.ToString("dd/MM/yyyy HH:mm")</small>
+                            <div class="mt-2">
+                                <span class="badge @(encuentro.Estado == "Pendiente" ? "bg-secondary" : "bg-success")">
+                                    @(encuentro.Estado ?? "Pendiente")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <img src="/Images/LogoDefault.png" width="50" class="rounded-circle border border-info">
+                            <p class="mb-0 fw-bold text-white">@(e2?.NombreEquipo ?? "Desconocido")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-calendar-x display-1 text-muted"></i>
+                <p class="text-muted mt-3">No hay duelos programados.</p>
+            </div>
+        }
+    </div>
+</div>

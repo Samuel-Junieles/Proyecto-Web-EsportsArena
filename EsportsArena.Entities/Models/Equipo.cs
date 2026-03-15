@@ -13,9 +13,12 @@ namespace EsportsArena.Entities.Models
         public string NombreEquipo { get; set; }
 
         [Required]
-        public string JuegoPrincipal { get; set; } // PC o Móvil
+        public string JuegoPrincipal { get; set; } 
 
         public int CapitanId { get; set; }
+
+        public string? Logo { get; set; }
+
         [ForeignKey("CapitanId")]
         public virtual Capitan Capitan { get; set; }
     }

@@ -39,9 +39,16 @@ namespace EsportsArena.Data.Context
                 .HasForeignKey(e => e.CapitanId);
 
             modelBuilder.Entity<Encuentro>()
-                .HasOne(en => en.Equipo)
+                .HasOne(en => en.Equipo1)
                 .WithMany()
-                .HasForeignKey(en => en.EquipoId);
+                .HasForeignKey(en => en.Equipo1Id)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<Encuentro>()
+                .HasOne(en => en.Equipo2)
+                .WithMany()
+                .HasForeignKey(en => en.Equipo2Id)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

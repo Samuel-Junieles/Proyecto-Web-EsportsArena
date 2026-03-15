@@ -10,14 +10,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://wallpaperaccess.com/full/2404179.jpg'); /* Imagen estilo Gamer */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/Images/Fondo.jpg');
             background-size: cover;
             background-position: center;
-            height: 100vh;
+            background-repeat: no-repeat; /* Agregado para evitar que la imagen se repita */
+            background-attachment: fixed; /* Opcional: hace que el fondo se quede quieto al hacer scroll */
+            min-height: 100vh; /* Mejor usar min-height para que no se corte en pantallas pequeñas */
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; /* Asegura que no haya espacios blancos alrededor */
         }
 
         .login-card {

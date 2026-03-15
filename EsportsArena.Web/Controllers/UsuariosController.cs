@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using EsportsArena.Logic.Services;
-using EsportsArena.Entities.Models;
+using EsportsArena.Logic.Services; 
+using Microsoft.AspNetCore.Http;
 
 namespace EsportsArena.Web.Controllers
 {
@@ -13,29 +13,17 @@ namespace EsportsArena.Web.Controllers
             _usuarioService = usuarioService;
         }
 
-        // Vista de la Tabla: Ver Información (Punto 1 de tus requerimientos)
         public IActionResult Index()
         {
-            var lista = _usuarioService.ObtenerTodosLosUsuarios();
-            return View(lista);
-        }
-
-        // Vista del Formulario: Crear Usuario
-        public IActionResult Crear()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Crear(Usuario usuario, string passwordNormal)
-        {
-            if (ModelState.IsValid)
+            // Seguridad: Si no hay sesión, al login
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogueado")))
             {
-                // Aquí usamos el SHA256 que definimos en la lógica
-                _usuarioService.RegistrarUsuario(usuario, passwordNormal);
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Login");
             }
-            return View(usuario);
+
+            // Obtenemos los datos de MySQL
+            var listaUsuarios = _usuarioService.ObtenerTodosLosUsuarios();
+            return View(listaUsuarios);
         }
     }
 }

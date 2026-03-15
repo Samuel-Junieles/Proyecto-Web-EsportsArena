@@ -2,12 +2,18 @@
 {
     public class TorneoService
     {
-        // Método solicitado: Simulación de resultado al inscribirse
-        public string GenerarResultadoAleatorio()
+        public string GenerarResultadoAleatorio(string local, string visitante)
         {
-            string[] resultados = { "Ganó", "Perdió", "Empate" };
+            // Aumentamos las opciones para que haya más variedad
+            string[] opciones = {
+                $"Ganó {local}",
+                $"Ganó {visitante}",
+                "Empate Técnico",
+                $"Victoria aplastante de {local}",
+            };
+
             Random ran = new Random();
-            return resultados[ran.Next(resultados.Length)];
+            return opciones[ran.Next(opciones.Length)];
         }
     }
 }
