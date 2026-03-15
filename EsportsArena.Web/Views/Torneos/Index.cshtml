@@ -1,0 +1,91 @@
+﻿@model IEnumerable<EsportsArena.Entities.Models.Encuentro>
+@{
+    ViewData["Title"] = "Panel de Torneo";
+    var equipos = ViewBag.Equipos as List<EsportsArena.Entities.Models.Equipo>;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<div class="container mt-4">
+    <div class="text-center mb-5">
+        <h1 class="text-warning fw-bold animate__animated animate__fadeInDown">
+            <i class="bi bi-trophy-fill"></i> ARENA DE TORNEOS
+        </h1>
+        <p class="text-muted">Simula los encuentros y descubre quién domina la liga.</p>
+    </div>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            var e1 = equipos?.FirstOrDefault(e => e.Id == item.Equipo1Id);
+            var e2 = equipos?.FirstOrDefault(e => e.Id == item.Equipo2Id);
+
+            <div class="col-lg-6 mb-4">
+                <div class="card bg-dark border-0 shadow-lg text-white h-100"
+                     style="border-bottom: 4px solid #ffc107 !important; background: linear-gradient(145deg, #1a1a1a, #0d0d0d);">
+
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="badge bg-outline-warning border border-warning text-warning px-3">MATCH #@item.Id</span>
+                            <span class="text-muted small"><i class="bi bi-calendar3"></i> @item.FechaEncuentro.ToString("dd MMM, HH:mm")</span>
+                        </div>
+
+                        <div class="row align-items-center text-center">
+                            <div class="col-5">
+                                <div class="position-relative d-inline-block">
+                                    <img src="@(string.IsNullOrEmpty(e1?.Logo) ? "/Images/LogoDefault.png" : e1.Logo)"
+                                         class="rounded-circle border border-2 border-info shadow-sm" width="70" height="70">
+                                </div>
+                                <h6 class="mt-2 fw-bold text-uppercase">@(e1?.NombreEquipo ?? "Unknown")</h6>
+                            </div>
+
+                            <div class="col-2">
+                                <h2 class="text-danger fw-black animate__animated animate__pulse animate__infinite">VS</h2>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="position-relative d-inline-block">
+                                    <img src="@(string.IsNullOrEmpty(e2?.Logo) ? "/Images/LogoDefault.png" : e2.Logo)"
+                                         class="rounded-circle border border-2 border-info shadow-sm" width="70" height="70">
+                                </div>
+                                <h6 class="mt-2 fw-bold text-uppercase">@(e2?.NombreEquipo ?? "Unknown")</h6>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top border-secondary text-center">
+                            <div id="wrapper-@item.Id">
+                                @if (string.IsNullOrEmpty(item.Estado) || item.Estado == "Pendiente")
+                                {
+                                    <button onclick="iniciarDuelo(@item.Id)" class="btn btn-warning w-100 fw-bold py-2 shadow">
+                                        <i class="bi bi-lightning-charge-fill"></i> INICIAR SIMULACIÓN
+                                    </button>
+                                }
+                                else
+                                {
+                                    <div class="animate__animated animate__bounceIn">
+                                        <span class="text-muted d-block small mb-1">RESULTADO FINAL</span>
+                                        <h3 class="@(item.Estado == "Ganó" ? "text-success" : item.Estado == "Perdió" ? "text-danger" : "text-info") fw-bold">
+                                            @item.Estado
+                                        </h3>
+                                    </div>
+                                }
+                            </div>
+
+                            <div id="timer-container-@item.Id" class="d-none animate__animated animate__fadeIn">
+                                <p class="text-warning mb-1 small fw-bold">PROCESANDO JUGADAS...</p>
+                                <h1 class="display-4 fw-bold text-white mb-0" id="clock-@item.Id">5</h1>
+                                <div class="progress bg-black mt-2" style="height: 6px;">
+                                    <div id="progress-@item.Id" class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/torneos.js" asp-append-version="true"></script>
+}

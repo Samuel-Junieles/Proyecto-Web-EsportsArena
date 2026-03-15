@@ -1,83 +1,57 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EsportsArena.Entities.Models;
+using EsportsArena.Logic.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EsportsArena.Web.Controllers
+
+public class EquiposController : Controller
 {
-    public class EquiposController : Controller
+    private readonly EquipoService _equipoService;
+    private readonly UsuarioService _usuarioService;
+
+    public EquiposController(EquipoService equipoService, UsuarioService usuarioService)
     {
-        // GET: EquiposController
-        public ActionResult Index()
-        {
-            return View();
-        }
+        _equipoService = equipoService;
+        _usuarioService = usuarioService;
+    }
 
-        // GET: EquiposController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+    // VISTA 1: La Tabla de Equipos
+    public IActionResult Index()
+    {
+        string username = HttpContext.Session.GetString("UsuarioLogueado");
+        if (string.IsNullOrEmpty(username)) return RedirectToAction("Index", "Login");
 
-        // GET: EquiposController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        var usuario = _usuarioService.ObtenerTodosLosUsuarios().FirstOrDefault(u => u.Username == username);
 
-        // POST: EquiposController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        // Obtenemos solo los equipos de este capitán
+        var misEquipos = _equipoService.ObtenerEquiposPorUsuario(usuario.Id);
+        return View(misEquipos);
+    }
+
+    // VISTA 2: El Formulario (GET)
+    public IActionResult Registrar()
+    {
+        return View();
+    }
+
+    // ACCIÓN: Guardar en la DB (POST)
+    [HttpPost]
+    public IActionResult Registrar(Equipo nuevoEquipo)
+    {
+        string username = HttpContext.Session.GetString("UsuarioLogueado");
+        var usuario = _usuarioService.ObtenerTodosLosUsuarios().FirstOrDefault(u => u.Username == username);
+
+        if (usuario != null)
         {
-            try
+            nuevoEquipo.CapitanId = usuario.Id;
+            _equipoService.RegistrarEquipo(nuevoEquipo);
+
+            if (string.IsNullOrEmpty(nuevoEquipo.Logo))
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EquiposController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: EquiposController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
+                // Apuntamos a la carpeta que creaste en wwwroot
+                nuevoEquipo.Logo = "/Images/LogoDefault.png";
             }
         }
 
-        // GET: EquiposController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: EquiposController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        return RedirectToAction("Index");
     }
 }

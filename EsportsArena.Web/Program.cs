@@ -13,9 +13,11 @@ builder.Services.AddControllersWithViews();
 // Configuración del GenericDAO
 builder.Services.AddScoped(typeof(IGenericDAO<>), typeof(GenericDAO<>));
 
-// Registro de los Servicios de Lógica
+// Registro de los Servicios de Lógica De Negocio
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<EncuentroService>();
+builder.Services.AddScoped<EquipoService>();
+builder.Services.AddScoped<TorneoService>();
 
 // Habilitar Sesiones para el Login
 builder.Services.AddSession();
@@ -64,7 +66,6 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<EsportsArena.Data.Context.AppDbContext>();
-        // Esta línea intenta abrir la conexión con XAMPP
         if (context.Database.CanConnect())
         {
             Console.WriteLine("ÉXITO: El proyecto está conectado a MySQL en XAMPP.");

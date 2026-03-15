@@ -9,17 +9,17 @@ namespace EsportsArena.Entities.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public string NombreTorneo { get; set; }
+        public int Equipo1Id { get; set; }
+        public int Equipo2Id { get; set; }
 
         public DateTime FechaEncuentro { get; set; } = DateTime.Now;
 
-        public string ResultadoRandom { get; set; } // Ganó / Perdió / Empate
+        public string? Estado { get; set; } = "Pendiente";
 
-        public decimal PremioAcumulado { get; set; }
+        [ForeignKey("Equipo1Id")]
+        public virtual Equipo Equipo1 { get; set; }
 
-        public int EquipoId { get; set; }
-        [ForeignKey("EquipoId")]
-        public virtual Equipo Equipo { get; set; }
+        [ForeignKey("Equipo2Id")]
+        public virtual Equipo Equipo2 { get; set; }
     }
 }

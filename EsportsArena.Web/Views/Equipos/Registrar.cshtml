@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Nuevo Equipo";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-dark text-white border-primary">
+                <div class="card-header border-primary"><h4 class="mb-0">REGISTRAR NUEVO SQUAD</h4></div>
+                <div class="card-body">
+                    <form asp-action="Registrar" method="post">
+                        <div class="mb-3">
+                            <label class="small text-info">NOMBRE DEL EQUIPO</label>
+                            <input name="NombreEquipo" class="form-control bg-black text-white border-secondary" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="small text-info">VIDEOJUEGO</label>
+                            <select name="JuegoPrincipal" class="form-select bg-black text-white border-secondary">
+                                <option value="League of Legends">League of Legends (PC)</option>
+                                <option value="Valorant">Valorant (PC)</option>
+                                <option value="Free Fire">Free Fire (Móvil)</option>
+                            </select>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary w-100 fw-bold">GUARDAR</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary w-100">CANCELAR</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

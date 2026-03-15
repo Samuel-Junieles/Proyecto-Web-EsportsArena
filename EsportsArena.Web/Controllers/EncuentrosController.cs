@@ -1,83 +1,77 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EsportsArena.Entities.Models;
+using EsportsArena.Logic.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EsportsArena.Web.Controllers
+public class EncuentrosController : Controller
 {
-    public class EncuentrosController : Controller
+    private readonly EquipoService _equipoService;
+    private readonly UsuarioService _usuarioService;
+    private readonly EncuentroService _encuentroService; // Agregado
+
+    public EncuentrosController(EquipoService equipoService, UsuarioService usuarioService, EncuentroService encuentroService)
     {
-        // GET: EncuentrosController
-        public ActionResult Index()
+        _equipoService = equipoService;
+        _usuarioService = usuarioService;
+        _encuentroService = encuentroService; // Asignación
+    }
+
+    // VISTA 1: Lista de enfrentamientos programados
+    public IActionResult Index()
+    {
+        string username = HttpContext.Session.GetString("UsuarioLogueado");
+        if (string.IsNullOrEmpty(username)) return RedirectToAction("Index", "Login");
+
+        // 2. Traer Encuentros (Usa .ToList() para evitar que la conexión se cierre)
+        var encuentros = _encuentroService.ObtenerTodos().ToList();
+
+        // 3. Traer TODOS los equipos para poder buscar los nombres
+        // Es mejor traer todos los equipos una vez, que consultar la DB por cada fila de la tabla
+        ViewBag.Equipos = _equipoService.ObtenerTodos().ToList();
+
+        return View(encuentros);
+    }
+
+    // VISTA 2: Formulario para crear el duelo
+    public IActionResult Registrar()
+    {
+        string username = HttpContext.Session.GetString("UsuarioLogueado");
+        var usuario = _usuarioService.ObtenerTodosLosUsuarios().FirstOrDefault(u => u.Username == username);
+
+        // Obtenemos solo los equipos del usuario actual
+        var misEquipos = _equipoService.ObtenerEquiposPorUsuario(usuario.Id).ToList();
+
+        // Los pasamos a la vista para llenar los selectores
+        return View(misEquipos);
+    }
+
+    [HttpPost]
+    public IActionResult GuardarEncuentro(Encuentro nuevoEncuentro)
+    {
+        // 1. Asignar estado por defecto (Evita el error de columna null)
+        if (string.IsNullOrEmpty(nuevoEncuentro.Estado))
         {
-            return View();
+            nuevoEncuentro.Estado = "Pendiente";
         }
 
-        // GET: EncuentrosController/Details/5
-        public ActionResult Details(int id)
+        // 2. Validación básica
+        if (nuevoEncuentro.Equipo1Id == nuevoEncuentro.Equipo2Id)
         {
-            return View();
+            TempData["Error"] = "Un equipo no puede enfrentarse a sí mismo.";
+            return RedirectToAction("Registrar");
         }
 
-        // GET: EncuentrosController/Create
-        public ActionResult Create()
+        // 3. Guardar
+        try
         {
-            return View();
+            _encuentroService.Guardar(nuevoEncuentro);
+            return RedirectToAction("Index");
         }
-
-        // POST: EncuentrosController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        catch (Exception ex)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EncuentrosController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: EncuentrosController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EncuentrosController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: EncuentrosController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            // Esto te dirá en pantalla si hay un error de base de datos
+            TempData["Error"] = "Error en DB: " + ex.Message;
+            return RedirectToAction("Registrar");
         }
     }
+
 }

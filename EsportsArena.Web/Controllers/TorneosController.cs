@@ -1,83 +1,42 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EsportsArena.Logic.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EsportsArena.Web.Controllers
+public class TorneosController : Controller
 {
-    public class TorneosController : Controller
+    private readonly TorneoService _torneoService;
+    private readonly EncuentroService _encuentroService;
+    private readonly EquipoService _equipoService;
+
+    public TorneosController(TorneoService torneoService, EncuentroService encuentroService, EquipoService equipoService)
     {
-        // GET: TorneosController
-        public ActionResult Index()
-        {
-            return View();
-        }
+        _torneoService = torneoService;
+        _encuentroService = encuentroService;
+        _equipoService = equipoService;
+    }
 
-        // GET: TorneosController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+    public IActionResult Index()
+    {
+        var encuentros = _encuentroService.ObtenerTodos().ToList();
+        ViewBag.Equipos = _equipoService.ObtenerTodos().ToList();
+        return View(encuentros);
+    }
 
-        // GET: TorneosController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+    [HttpPost]
+    public IActionResult ProcesarResultado(int id)
+    {
+        var encuentro = _encuentroService.ObtenerPorId(id);
+        if (encuentro == null) return Json(new { success = false });
 
-        // POST: TorneosController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        // Buscamos los equipos para saber sus nombres
+        var e1 = _equipoService.ObtenerTodos().FirstOrDefault(e => e.Id == encuentro.Equipo1Id);
+        var e2 = _equipoService.ObtenerTodos().FirstOrDefault(e => e.Id == encuentro.Equipo2Id);
 
-        // GET: TorneosController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+        // Llamamos al nuevo método con nombres reales
+        string resultadoReal = _torneoService.GenerarResultadoAleatorio(e1.NombreEquipo, e2.NombreEquipo);
 
-        // POST: TorneosController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        encuentro.Estado = resultadoReal;
+        _encuentroService.Actualizar(encuentro);
 
-        // GET: TorneosController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: TorneosController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        return Json(new { success = true, resultado = resultadoReal });
     }
 }
