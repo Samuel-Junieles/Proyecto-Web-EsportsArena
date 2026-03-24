@@ -1,49 +1,75 @@
 ﻿@model IEnumerable<EsportsArena.Entities.Models.Equipo>
 
+@{
+    ViewData["Title"] = "Mis Squads";
+}
+
 <div class="container-fluid animate__animated animate__fadeIn">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="text-primary fw-bold mb-0">MIS EQUIPOS</h2>
-            <p class="text-muted">Gestiona tus squads inscritos en la arena.</p>
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="display-6 fw-bold text-white mb-0">MIS <span style="color: var(--accent-cyan)">SQUADS</span></h2>
+            <p style="color: #a0aec0; letter-spacing: 1px;">Control de flotas y alineaciones registradas.</p>
         </div>
-        <a asp-action="Registrar" class="btn btn-primary fw-bold shadow-lg">
-            <i class="bi bi-plus-circle-fill"></i> NUEVA INSCRIPCIÓN
-        </a>
+        <div class="col-md-4 text-md-end">
+            <a asp-action="Registrar" class="btn btn-neu text-info fw-bold py-2 px-4">
+                <i class="bi bi-plus-circle-fill me-2"></i>NUEVA INSCRIPCIÓN
+            </a>
+        </div>
     </div>
 
-    <div class="card bg-dark border-0 shadow-lg" style="background-color: #161b22 !important;">
+    <div class="neu-card p-0 overflow-hidden">
         <div class="table-responsive">
-            <table class="table table-dark table-hover mb-0">
-                <thead class="bg-black">
-                    <tr>
-                        <th class="ps-4">LOGO</th>
-                        <th>NOMBRE DEL EQUIPO</th>
-                        <th>JUEGO</th>
-                        <th class="text-center">ACCIONES</th>
+            <table class="table table-dark align-middle mb-0">
+                <thead>
+                    <tr style="background: rgba(0,0,0,0.2);">
+                        <th class="ps-4 py-4 text-muted small">ESCUDO</th>
+                        <th class="py-4 text-white">NOMBRE DEL EQUIPO</th>
+                        <th class="py-4 text-white">DISCIPLINA / JUEGO</th>
+                        <th class="py-4 text-center text-white">ACCIONES</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var equipo in Model)
                     {
-                        <tr style="vertical-align: middle;">
+                        <tr class="border-bottom border-secondary border-opacity-10">
                             <td class="ps-4">
-                                <img src="/Images/LogoDefault.png"
-                                     alt="Logo"
-                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; border: 2px solid #00d4ff;">
+                                <div class="team-logo-container">
+                                    <img src="@(string.IsNullOrEmpty(equipo.Logo) ? "/Images/LogoDefault.png" : equipo.Logo)"
+                                         class="img-fluid rounded-circle shadow-sm"
+                                         style="width: 45px; height: 45px; border: 2px solid var(--accent-cyan);" />
+                                </div>
                             </td>
-                            <td class="fw-bold">@equipo.NombreEquipo</td>
-                            <td><span class="badge bg-info-subtle text-info border border-info">@equipo.JuegoPrincipal</span></td>
+                            <td>
+                                <span class="fw-bold text-white fs-5">@equipo.NombreEquipo</span>
+                                <div class="small text-muted">ID: #@equipo.Id</div>
+                            </td>
+                            <td>
+                                <span class="badge-game">
+                                    <i class="bi bi-controller me-1"></i> @equipo.JuegoPrincipal
+                                </span>
+                            </td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil"></i></button>
-                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button onclick="prepararEdicionEquipo(@equipo.Id, '@equipo.NombreEquipo', '@equipo.JuegoPrincipal')"
+                                            class="btn-action edit" title="Ajustar Squad">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button onclick="confirmarEliminacionEquipo(@equipo.Id)"
+                                            class="btn-action delete" title="Disolver Equipo">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     }
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="4" class="text-center py-5 text-muted italic">
-                                <i class="bi bi-exclamation-circle"></i> Aún no tienes equipos. ¡Crea el primero!
+                            <td colspan="4" class="text-center py-5">
+                                <div class="text-muted opacity-50">
+                                    <i class="bi bi-ghost fs-1 d-block mb-2"></i>
+                                    SIN EQUIPOS ACTIVOS
+                                </div>
                             </td>
                         </tr>
                     }
@@ -52,3 +78,125 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalEdicionEquipo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content neu-card border-0">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white fw-bold">RECONFIGURAR <span class="text-info">SQUAD</span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="editEquipoId" />
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">NOMBRE DE LA ESCUADRA</label>
+                    <input type="text" id="editNombreEquipo" class="form-control neu-input" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">JUEGO PRINCIPAL</label>
+                    <select id="editJuego" class="form-select neu-input">
+                        <option value="League of Legends">League of Legends</option>
+                        <option value="Valorant">Valorant</option>
+                        <option value="Dota 2">Dota 2</option>
+                        <option value="Counter Strike 2">Counter Strike 2</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ABORTAR</button>
+                <button type="button" onclick="actualizarEquipo()" class="btn btn-neu text-info">GUARDAR CAMBIOS</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .badge-game {
+        background: rgba(0, 242, 254, 0.1);
+        color: var(--accent-cyan);
+        padding: 5px 15px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        text-transform: uppercase;
+    }
+
+    .team-logo-container {
+        filter: drop-shadow(0 0 5px rgba(0, 212, 255, 0.3));
+    }
+
+    .btn-action {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: none;
+        background: #161b22;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+        box-shadow: 3px 3px 6px #090c10, -2px -2px 6px #212832;
+    }
+
+        .btn-action.edit {
+            color: #00f2fe;
+        }
+
+        .btn-action.delete {
+            color: #f25c54;
+        }
+
+        .btn-action:hover {
+            box-shadow: inset 2px 2px 5px #000;
+            transform: scale(0.95);
+        }
+</style>
+
+<script>
+    function prepararEdicionEquipo(id, nombre, juego) {
+        document.getElementById('editEquipoId').value = id;
+        document.getElementById('editNombreEquipo').value = nombre;
+        document.getElementById('editJuego').value = juego;
+        new bootstrap.Modal(document.getElementById('modalEdicionEquipo')).show();
+    }
+
+    function actualizarEquipo() {
+        const data = {
+            Id: parseInt(document.getElementById('editEquipoId').value),
+            NombreEquipo: document.getElementById('editNombreEquipo').value,
+            JuegoPrincipal: document.getElementById('editJuego').value
+        };
+
+        fetch('/Equipos/Actualizar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.success) location.reload();
+            else Swal.fire('Error', 'No se pudo actualizar', 'error');
+        });
+    }
+
+    function confirmarEliminacionEquipo(id) {
+        Swal.fire({
+            title: '¿DISOLVER EQUIPO?',
+            text: "Esta acción no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'ELIMINAR SQUAD',
+            background: '#12171e', color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/Equipos/Eliminar?id=${id}`, { method: 'POST' })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) location.reload();
+                    else Swal.fire('Error', 'Posiblemente tiene encuentros programados', 'error');
+                });
+            }
+        });
+    }
+</script>
