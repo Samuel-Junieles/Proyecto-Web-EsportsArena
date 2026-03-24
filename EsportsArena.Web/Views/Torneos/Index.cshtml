@@ -1,81 +1,87 @@
 ﻿@model IEnumerable<EsportsArena.Entities.Models.Encuentro>
 @{
-    ViewData["Title"] = "Panel de Torneo";
+    ViewData["Title"] = "Arena de Torneos";
     var equipos = ViewBag.Equipos as List<EsportsArena.Entities.Models.Equipo>;
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
-<div class="container mt-4">
-    <div class="text-center mb-5">
-        <h1 class="text-warning fw-bold animate__animated animate__fadeInDown">
-            <i class="bi bi-trophy-fill"></i> ARENA DE TORNEOS
+<div class="container-fluid animate__animated animate__fadeIn">
+    <div class="text-center mb-5 mt-4">
+        <div class="trophy-glow mb-3">
+            <i class="bi bi-trophy-fill display-1 text-warning"></i>
+        </div>
+        <h1 class="display-5 fw-bold text-white mb-0" style="letter-spacing: 3px;">
+            ARENA DE <span style="color: var(--accent-cyan)">TORNEOS</span>
         </h1>
-        <p class="text-muted">Simula los encuentros y descubre quién domina la liga.</p>
     </div>
 
-    <div class="row">
+    <div class="row px-lg-5">
         @foreach (var item in Model)
         {
             var e1 = equipos?.FirstOrDefault(e => e.Id == item.Equipo1Id);
             var e2 = equipos?.FirstOrDefault(e => e.Id == item.Equipo2Id);
 
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-dark border-0 shadow-lg text-white h-100"
-                     style="border-bottom: 4px solid #ffc107 !important; background: linear-gradient(145deg, #1a1a1a, #0d0d0d);">
+            <div class="col-xl-6 mb-4">
+                <div class="neu-card p-0 overflow-hidden border-0">
+                    <div class="card-header border-0 bg-transparent pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <span class="match-badge">MATCH #@item.Id</span>
+                        <span class="text-info small fw-bold">
+                            <i class="bi bi-calendar3 me-1"></i> @item.FechaEncuentro.ToString("dd MMM, HH:mm")
+                        </span>
+                    </div>
 
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <span class="badge bg-outline-warning border border-warning text-warning px-3">MATCH #@item.Id</span>
-                            <span class="text-muted small"><i class="bi bi-calendar3"></i> @item.FechaEncuentro.ToString("dd MMM, HH:mm")</span>
-                        </div>
-
-                        <div class="row align-items-center text-center">
+                    <div class="card-body p-4 pt-2">
+                        <div class="row align-items-center text-center my-4">
                             <div class="col-5">
-                                <div class="position-relative d-inline-block">
-                                    <img src="@(string.IsNullOrEmpty(e1?.Logo) ? "/Images/LogoDefault.png" : e1.Logo)"
-                                         class="rounded-circle border border-2 border-info shadow-sm" width="70" height="70">
+                                <div class="avatar-hexagon mx-auto">
+                                    <img src="@(string.IsNullOrEmpty(e1?.Logo) ? "/Images/LogoDefault.png" : e1.Logo)" alt="E1">
                                 </div>
-                                <h6 class="mt-2 fw-bold text-uppercase">@(e1?.NombreEquipo ?? "Unknown")</h6>
+                                <h5 class="mt-3 fw-black text-white text-uppercase">@(e1?.NombreEquipo ?? "Unknown")</h5>
                             </div>
 
                             <div class="col-2">
-                                <h2 class="text-danger fw-black animate__animated animate__pulse animate__infinite">VS</h2>
+                                <div class="vs-container">
+                                    <h2 class="vs-text animate__animated animate__pulse animate__infinite">VS</h2>
+                                </div>
                             </div>
 
                             <div class="col-5">
-                                <div class="position-relative d-inline-block">
-                                    <img src="@(string.IsNullOrEmpty(e2?.Logo) ? "/Images/LogoDefault.png" : e2.Logo)"
-                                         class="rounded-circle border border-2 border-info shadow-sm" width="70" height="70">
+                                <div class="avatar-hexagon mx-auto">
+                                    <img src="@(string.IsNullOrEmpty(e2?.Logo) ? "/Images/LogoDefault.png" : e2.Logo)" alt="E2">
                                 </div>
-                                <h6 class="mt-2 fw-bold text-uppercase">@(e2?.NombreEquipo ?? "Unknown")</h6>
+                                <h5 class="mt-3 fw-black text-white text-uppercase">@(e2?.NombreEquipo ?? "Unknown")</h5>
                             </div>
                         </div>
 
-                        <div class="mt-4 pt-3 border-top border-secondary text-center">
+                        <div class="action-zone mt-4">
                             <div id="wrapper-@item.Id">
                                 @if (string.IsNullOrEmpty(item.Estado) || item.Estado == "Pendiente")
                                 {
-                                    <button onclick="iniciarDuelo(@item.Id)" class="btn btn-warning w-100 fw-bold py-2 shadow">
-                                        <i class="bi bi-lightning-charge-fill"></i> INICIAR SIMULACIÓN
+                                    <button onclick="iniciarDuelo(@item.Id)" class="btn btn-neu text-warning w-100 py-3 fw-bold">
+                                        <i class="bi bi-play-circle-fill me-2"></i> INICIAR SIMULACIÓN
                                     </button>
                                 }
                                 else
                                 {
-                                    <div class="animate__animated animate__bounceIn">
-                                        <span class="text-muted d-block small mb-1">RESULTADO FINAL</span>
-                                        <h3 class="@(item.Estado == "Ganó" ? "text-success" : item.Estado == "Perdió" ? "text-danger" : "text-info") fw-bold">
-                                            @item.Estado
-                                        </h3>
+                                    <div class="result-display animate__animated animate__backInUp text-center">
+                                        <span class="text-muted d-block small mb-1 fw-bold">DICTAMEN FINAL</span>
+                                        <h2 class="result-text @(item.Estado.Contains("Ganó") ? "win" : "lost")">
+                                            @item.Estado.ToUpper()
+                                        </h2>
                                     </div>
                                 }
                             </div>
 
-                            <div id="timer-container-@item.Id" class="d-none animate__animated animate__fadeIn">
-                                <p class="text-warning mb-1 small fw-bold">PROCESANDO JUGADAS...</p>
-                                <h1 class="display-4 fw-bold text-white mb-0" id="clock-@item.Id">5</h1>
-                                <div class="progress bg-black mt-2" style="height: 6px;">
-                                    <div id="progress-@item.Id" class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: 100%"></div>
+                            <div id="timer-container-@item.Id" class="d-none animate__animated animate__fadeIn text-center">
+                                <div class="processing-glow py-3">
+                                    <p class="text-warning mb-2 small fw-bold" style="letter-spacing: 2px;">PROCESANDO JUGADAS...</p>
+                                    <h1 class="display-3 fw-bold text-white mb-0" id="clock-@item.Id">5</h1>
+                                    <div class="progress-container mx-auto mt-3" style="max-width: 80%;">
+                                        <div class="progress bg-black rounded-pill" style="height: 10px;">
+                                            <div id="progress-@item.Id" class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: 100%"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -85,6 +91,82 @@
         }
     </div>
 </div>
+
+<style>
+    /* Efecto de Brillo para el Trofeo */
+    .trophy-glow {
+        filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.4));
+    }
+
+    /* Badge de Match */
+    .match-badge {
+        background: #1a202c;
+        color: #ffc107;
+        padding: 5px 15px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 900;
+        box-shadow: inset 2px 2px 5px #000;
+        border: 1px solid rgba(255, 193, 7, 0.1);
+    }
+
+    /* Hexagono de Logo (Estilo eSports) */
+    .avatar-hexagon {
+        width: 90px;
+        height: 90px;
+        background: #0d1117;
+        padding: 4px;
+        border-radius: 20px; /* Redondeado tipo escudo */
+        box-shadow: 6px 6px 12px #090c10, -4px -4px 12px #1b222c;
+        border: 2px solid rgba(0, 242, 254, 0.2);
+    }
+
+        .avatar-hexagon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 18px;
+            object-fit: cover;
+        }
+
+    /* Texto de VS */
+    .vs-text {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #f25c54;
+        text-shadow: 0 0 10px rgba(242, 92, 84, 0.5);
+        font-style: italic;
+    }
+
+    /* Zona de Acción Neumórfica */
+    .action-zone {
+        background: rgba(0,0,0,0.2);
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: inset 4px 4px 10px #090c10, inset -2px -2px 10px #1b222c;
+    }
+
+    /* Resultados Finales */
+    .result-text {
+        font-weight: 900;
+        letter-spacing: 2px;
+        text-shadow: 0 0 15px currentColor;
+    }
+
+        .result-text.win {
+            color: #00f2fe;
+        }
+
+        .result-text.lost {
+            color: #f25c54;
+        }
+
+    /* Contenedor del Timer */
+    .processing-glow {
+        border: 1px solid rgba(255, 193, 7, 0.1);
+        border-radius: 15px;
+        background: rgba(255,193,7,0.02);
+    }
+</style>
 
 @section Scripts {
     <script src="~/js/torneos.js" asp-append-version="true"></script>
