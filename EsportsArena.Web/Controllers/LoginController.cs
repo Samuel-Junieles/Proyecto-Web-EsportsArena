@@ -15,20 +15,29 @@ namespace EsportsArena.Web.Controllers
             _usuarioService = usuarioService;
         }
 
-        // GET: Login/Index (Vista de Ingreso)
         public IActionResult Index() => View();
 
-        // GET: Login/Registro (Vista de Formulario)
         public IActionResult Registro() => View();
 
-        // POST: Login/Registro (Procesar nuevo usuario)
         [HttpPost]
         public IActionResult Registrar(Usuario usuario, string password)
         {
-            // Asignamos el Rol de Capitán por defecto para nuevos registros
-            usuario.RolId = 2;
-            _usuarioService.RegistrarUsuario(usuario, password);
-            return RedirectToAction("Index");
+            try
+            {
+                usuario.RolId = 2;
+
+                _usuarioService.RegistrarUsuario(usuario, password);
+
+                TempData["RegistroExitoso"] = "¡Cuenta creada con éxito, Legend! Ya puedes ingresar.";
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                // Por si algo falla en el Service o DAO (ej: correo duplicado)
+                TempData["LoginError"] = "Hubo un problema al crear la cuenta: " + ex.Message;
+                return View();
+            }
         }
 
         // POST: Login/Ingresar (Validar credenciales)
@@ -36,13 +45,18 @@ namespace EsportsArena.Web.Controllers
         public IActionResult Ingresar(string username, string password)
         {
             var user = _usuarioService.ValidarLogin(username, password);
+
             if (user != null)
             {
-                // Guardamos en sesión para cumplir con el requerimiento
                 HttpContext.Session.SetString("UsuarioLogueado", user.Username);
+
+                TempData["LoginSuccess"] = $"¡Bienvenido de nuevo, {user.Username}!";
+
                 return RedirectToAction("Index", "Home");
             }
-            ViewBag.Error = "Usuario o contraseña incorrectos.";
+
+            TempData["LoginError"] = "Usuario o contraseña incorrectos. Verifica tus credenciales.";
+
             return View("Index");
         }
 
