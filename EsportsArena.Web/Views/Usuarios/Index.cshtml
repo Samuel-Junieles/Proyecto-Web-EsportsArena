@@ -1,72 +1,255 @@
 ﻿@model IEnumerable<EsportsArena.Entities.Models.Usuario>
 
+@{
+    ViewData["Title"] = "Gestión de Operadores";
+}
+
 <div class="container-fluid animate__animated animate__fadeIn">
+
     <div class="row mb-4 align-items-center">
         <div class="col-md-8">
-            <h2 class="display-6 fw-bold text-white">GESTIÓN DE <span style="color: var(--accent-cyan)">OPERADORES</span></h2>
-            <p style="color: #a0aec0;">Administración central de cuentas de la Arena.</p>
+            <h2 class="display-6 fw-bold text-white mb-0">SISTEMA DE <span style="color: var(--accent-cyan)">OPERADORES</span></h2>
+            <p style="color: #a0aec0; letter-spacing: 1px;">Panel de administración de credenciales y acceso.</p>
         </div>
-        <div class="col-md-4 text-end">
+        <div class="col-md-4 text-md-end">
             <a href="/Login/Registro" class="btn btn-neu text-info fw-bold py-2 px-4">
                 <i class="bi bi-person-plus-fill me-2"></i>NUEVO REGISTRO
             </a>
         </div>
     </div>
 
-    <div class="neu-card p-0">
-        <table class="table table-dark align-middle mb-0">
-            <thead>
-                <tr>
-                    <th class="ps-4 py-3">ID</th>
-                    <th class="py-3">USUARIO</th>
-                    <th class="py-3">EMAIL</th>
-                    <th class="py-3 text-center">ACCIONES</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model)
-                {
-                    <tr>
-                        <td class="ps-4 text-muted">#@user.Id</td>
-                        <td class="fw-bold text-white">@user.Username</td>
-                        <td style="color: #cbd5e0;">@user.Email</td>
-                        <td class="text-center">
-                            <div class="d-flex justify-content-center gap-3">
-                                <button onclick="prepararEdicion(@user.Id)" class="btn-action edit"><i class="bi bi-pencil-fill"></i></button>
-                                <button onclick="confirmarEliminacion(@user.Id)" class="btn-action delete"><i class="bi bi-trash3-fill"></i></button>
-                            </div>
-                        </td>
+    <div class="neu-card p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-dark align-middle mb-0">
+                <thead>
+                    <tr style="background: rgba(0,0,0,0.2);">
+                        <th class="ps-4 py-4 text-muted small">ID</th>
+                        <th class="py-4 text-white">USUARIO</th>
+                        <th class="py-4 text-white">EMAIL</th>
+                        <th class="py-4 text-white text-center">ESTADO</th>
+                        <th class="py-4 text-center text-white">ACCIONES</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr class="border-bottom border-secondary border-opacity-10">
+                            <td class="ps-4 text-muted">#@user.Id</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar-small me-3">@user.Username.Substring(0, 1).ToUpper()</div>
+                                    <span class="fw-bold text-white">@user.Username</span>
+                                </div>
+                            </td>
+                            <td style="color: #cbd5e0;">@user.Email</td>
+                            <td class="text-center">
+                                <span class="badge-gamer">
+                                    <i class="bi bi-shield-check text-cyan"></i> ACTIVO
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button onclick="prepararEdicion(@user.Id, '@user.Username', '@user.Email')" class="btn-action edit" title="Editar Operador">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    <button onclick="confirmarEliminacion(@user.Id)" class="btn-action delete" title="Dar de Baja">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
+<div class="modal fade" id="modalEdicion" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content neu-card border-0">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white fw-bold">EDITAR <span class="text-info">OPERADOR</span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="editUserId" />
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">USERNAME</label>
+                    <input type="text" id="editUsername" class="form-control neu-input" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">EMAIL</label>
+                    <input type="email" id="editEmail" class="form-control neu-input" />
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCELAR</button>
+                <button type="button" onclick="ejecutarActualizacion()" class="btn btn-neu text-info">GUARDAR CAMBIOS</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .user-avatar-small {
+        width: 35px;
+        height: 35px;
+        background: var(--neu-upper);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--accent-cyan);
+        box-shadow: 2px 2px 5px #000;
+        border: 1px solid rgba(0, 242, 254, 0.1);
+    }
+
+    .badge-gamer {
+        background: rgba(0, 242, 254, 0.05);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: #fff;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        letter-spacing: 1px;
+    }
+
+    .btn-action {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        border: none;
+        background: var(--bg-main);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        box-shadow: 4px 4px 8px #090c10, -2px -2px 8px #1b222c;
+    }
+
+        .btn-action.edit {
+            color: #ffcc00;
+        }
+
+        .btn-action.delete {
+            color: #ff4d4d;
+        }
+
+        .btn-action:hover {
+            box-shadow: inset 2px 2px 5px #000;
+            transform: translateY(2px);
+        }
+
+    /* Input Neumórfico para el Modal */
+    .neu-input {
+        background: #0d1117 !important;
+        border: 1px solid #30363d !important;
+        color: white !important;
+        border-radius: 10px;
+        box-shadow: inset 2px 2px 5px #000;
+    }
+</style>
+
 <script>
-    function confirmarEliminacion(id) {
+    function prepararEdicion(id, username, email) {
+        document.getElementById('editUserId').value = id;
+        document.getElementById('editUsername').value = username;
+        document.getElementById('editEmail').value = email;
+        new bootstrap.Modal(document.getElementById('modalEdicion')).show();
+    }
+
+    function ejecutarActualizacion() {
+        const id = document.getElementById('editUserId').value;
+        const user = {
+            id: parseInt(id),
+            username: document.getElementById('editUsername').value,
+            email: document.getElementById('editEmail').value
+        };
+
         Swal.fire({
-            title: '¿ELIMINAR ACCESO?',
-            text: "El usuario perderá sus privilegios inmediatamente.",
-            icon: 'warning',
+            title: '¿ACTUALIZAR DATOS?',
+            icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#ff4d4d',
-            cancelButtonColor: '#1b222c',
-            confirmButtonText: 'SÍ, ELIMINAR',
+            confirmButtonText: 'SÍ, GUARDAR',
             background: '#12171e',
             color: '#fff'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Llamada AJAX para simular lo que hará Postman después
-                fetch(`/Usuarios/Eliminar/${id}`, { method: 'DELETE' })
-                .then(res => res.json())
+                // Simulación de llamada API
+                console.log("Enviando PUT a la API:", user);
+                Swal.fire('¡ÉXITO!', 'Operador actualizado correctamente.', 'success');
+                // Aquí iría el fetch a /api/usuariosapi
+            }
+        });
+    }
+
+        function confirmarEliminacion(id) {
+        Swal.fire({
+            title: '¿CONFIRMAR BAJA?',
+            text: "Esta acción borrará al usuario permanentemente de la Arena.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff4d4d', // Rojo Gamer
+            cancelButtonColor: '#1b222c',
+            confirmButtonText: 'SÍ, ELIMINAR',
+            cancelButtonText: 'CANCELAR',
+            background: '#12171e',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // URL real del controlador con el parámetro id
+                fetch(`/Usuarios/Eliminar?id=${id}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
                 .then(data => {
-                    if(data.success) {
-                        Swal.fire('LOGRADO', data.message, 'success');
-                        location.reload();
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'ELIMINADO',
+                            text: data.message,
+                            icon: 'success',
+                            background: '#12171e',
+                            color: '#fff'
+                        }).then(() => {
+                            // Esto hace que la fila desaparezca de la tabla
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('ERROR', data.message, 'error');
                     }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('ERROR', 'No se pudo conectar con el servidor', 'error');
                 });
             }
         });
     }
+
+        function ejecutarActualizacion() {
+        const user = {
+            Id: parseInt(document.getElementById('editUserId').value),
+            Username: document.getElementById('editUsername').value,
+            Email: document.getElementById('editEmail').value
+            // Importante: No enviamos Password aquí para no sobreescribirla por error
+        };
+
+        fetch('/Usuarios/Actualizar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire('¡LOGRADO!', data.message, 'success').then(() => location.reload());
+            } else {
+                Swal.fire('ERROR', data.message, 'error');
+            }
+        });
+    }
 </script>
+
