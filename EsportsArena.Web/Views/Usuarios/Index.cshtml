@@ -1,66 +1,72 @@
 ﻿@model IEnumerable<EsportsArena.Entities.Models.Usuario>
 
-@{
-    ViewData["Title"] = "Gestión de Usuarios";
-}
-
 <div class="container-fluid animate__animated animate__fadeIn">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="text-primary fw-bold mb-0">USUARIOS REGISTRADOS</h2>
-            <p class="text-muted">Lista detallada de capitanes y miembros de la arena.</p>
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="display-6 fw-bold text-white">GESTIÓN DE <span style="color: var(--accent-cyan)">OPERADORES</span></h2>
+            <p style="color: #a0aec0;">Administración central de cuentas de la Arena.</p>
         </div>
-        <a asp-action="Registro" asp-controller="Login" class="btn btn-outline-primary fw-bold">
-            <i class="bi bi-person-plus-fill"></i> NUEVO REGISTRO
-        </a>
+        <div class="col-md-4 text-end">
+            <a href="/Login/Registro" class="btn btn-neu text-info fw-bold py-2 px-4">
+                <i class="bi bi-person-plus-fill me-2"></i>NUEVO REGISTRO
+            </a>
+        </div>
     </div>
 
-    <div class="card bg-dark border-0 shadow-lg" style="background-color: #161b22 !important;">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0" style="border-color: #30363d;">
-                    <thead class="bg-black">
-                        <tr>
-                            <th class="ps-4 py-3 text-info">ID</th>
-                            <th class="py-3 text-info">USERNAME</th>
-                            <th class="py-3 text-info">EMAIL</th>
-                            <th class="py-3 text-info">ESTADO</th>
-                            <th class="py-3 text-info text-center">ACCIONES</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in Model)
-                        {
-                            <tr style="vertical-align: middle;">
-                                <td class="ps-4">@user.Id</td>
-                                <td class="fw-bold">@user.Username</td>
-                                <td>@user.Email</td>
-                                <td>
-                                    <span class="badge bg-success-subtle text-success border border-success">
-                                        <i class="bi bi-shield-check"></i> Encriptado
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn btn-sm btn-outline-warning mx-1"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger mx-1"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="neu-card p-0">
+        <table class="table table-dark align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-4 py-3">ID</th>
+                    <th class="py-3">USUARIO</th>
+                    <th class="py-3">EMAIL</th>
+                    <th class="py-3 text-center">ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td class="ps-4 text-muted">#@user.Id</td>
+                        <td class="fw-bold text-white">@user.Username</td>
+                        <td style="color: #cbd5e0;">@user.Email</td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-3">
+                                <button onclick="prepararEdicion(@user.Id)" class="btn-action edit"><i class="bi bi-pencil-fill"></i></button>
+                                <button onclick="confirmarEliminacion(@user.Id)" class="btn-action delete"><i class="bi bi-trash3-fill"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
-<style>
-    .table-hover tbody tr:hover {
-        background-color: rgba(0, 212, 255, 0.05) !important;
-        transition: 0.3s;
+<script>
+    function confirmarEliminacion(id) {
+        Swal.fire({
+            title: '¿ELIMINAR ACCESO?',
+            text: "El usuario perderá sus privilegios inmediatamente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff4d4d',
+            cancelButtonColor: '#1b222c',
+            confirmButtonText: 'SÍ, ELIMINAR',
+            background: '#12171e',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Llamada AJAX para simular lo que hará Postman después
+                fetch(`/Usuarios/Eliminar/${id}`, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        Swal.fire('LOGRADO', data.message, 'success');
+                        location.reload();
+                    }
+                });
+            }
+        });
     }
-
-    .badge {
-        font-size: 0.75rem;
-        letter-spacing: 1px;
-    }
-</style>
+</script>
