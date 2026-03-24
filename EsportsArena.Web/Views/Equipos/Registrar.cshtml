@@ -1,33 +1,131 @@
 ﻿@{
-    ViewData["Title"] = "Nuevo Equipo";
+    ViewData["Title"] = "Nuevo Squad";
 }
 
-<div class="container mt-5">
+<div class="container animate__animated animate__zoomIn mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card bg-dark text-white border-primary">
-                <div class="card-header border-primary"><h4 class="mb-0">REGISTRAR NUEVO SQUAD</h4></div>
-                <div class="card-body">
-                    <form asp-action="Registrar" method="post">
-                        <div class="mb-3">
-                            <label class="small text-info">NOMBRE DEL EQUIPO</label>
-                            <input name="NombreEquipo" class="form-control bg-black text-white border-secondary" required />
+        <div class="col-md-7">
+            <div class="neu-card p-4">
+
+                <div class="d-flex justify-content-between mb-4 px-2">
+                    <div id="currentDate" class="small fw-bold text-info" style="letter-spacing: 1px;">--/--/----</div>
+                    <div id="currentTime" class="small fw-bold text-white" style="letter-spacing: 2px;">00:00:00</div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <div class="icon-circle mb-3">
+                        <i class="bi bi-cpu-fill text-info fs-1"></i>
+                    </div>
+                    <h3 class="fw-bold text-white">INSCRIPCIÓN DE <span style="color: var(--accent-cyan)">SQUAD</span></h3>
+                    <p class="text-light opacity-75 small">Registra a tu equipo para un combate.</p>
+                </div>
+
+                <form asp-action="Registrar" method="post" class="p-2">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold mb-2" style="color: #00f2fe; font-size: 0.85rem; text-shadow: 0 0 5px rgba(0,242,254,0.3);">
+                                <i class="bi bi-pci-card me-1"></i> NOMBRE DEl EQUIPO
+                            </label>
+                            <input name="NombreEquipo"
+                                   class="form-control neu-input"
+                                   placeholder="Ej: Cyber Hunters"
+                                   required />
                         </div>
-                        <div class="mb-3">
-                            <label class="small text-info">VIDEOJUEGO</label>
-                            <select name="JuegoPrincipal" class="form-select bg-black text-white border-secondary">
+
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold mb-2" style="color: #00f2fe; font-size: 0.85rem; text-shadow: 0 0 5px rgba(0,242,254,0.3);">
+                                <i class="bi bi-controller me-1"></i> DISCIPLINA PRINCIPAL
+                            </label>
+                            <select name="JuegoPrincipal" class="form-select neu-input">
                                 <option value="League of Legends">League of Legends (PC)</option>
                                 <option value="Valorant">Valorant (PC)</option>
                                 <option value="Free Fire">Free Fire (Móvil)</option>
+                                <option value="Counter Strike 2">Counter Strike 2 (PC)</option>
                             </select>
                         </div>
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary w-100 fw-bold">GUARDAR</button>
-                            <a asp-action="Index" class="btn btn-outline-secondary w-100">CANCELAR</a>
+
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold mb-2" style="color: #00f2fe; font-size: 0.85rem; text-shadow: 0 0 5px rgba(0,242,254,0.3);">
+                                <i class="bi bi-calendar-event me-1"></i> FECHA Y HORA DE REGISTRO
+                            </label>
+                            <input type="datetime-local"
+                                   id="fechaRegistro"
+                                   class="form-control neu-input"
+                                   required />
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <a asp-action="Index" class="btn btn-outline-secondary w-100 py-2 fw-bold" style="border-radius: 12px; border-color: #444;">
+                                <i class="bi bi-x-lg me-2"></i>CANCELAR
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-neu text-info w-100 py-2 fw-bold">
+                                <i class="bi bi-check-all me-2"></i>CONFIRMAR
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Ajuste de brillo para letras pequeñas (labels) */
+    .form-label {
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+    }
+
+    .icon-circle {
+        width: 85px;
+        height: 85px;
+        background: #12171e;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        box-shadow: 8px 8px 16px #090c10, -4px -4px 16px #1b222c;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+    }
+
+    .neu-input {
+        background: #0d1117 !important;
+        border: 1px solid #30363d !important;
+        color: #e6edf3 !important; /* Texto claro */
+        border-radius: 12px;
+        padding: 12px 15px;
+        box-shadow: inset 4px 4px 8px #05070a, inset -2px -2px 8px #161b22;
+    }
+
+    /* Estilo para que el calendario se vea bien en modo oscuro */
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    // Reloj y Fecha Dinámica
+    function updateClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+        const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+        document.getElementById('currentTime').innerText = timeStr;
+        document.getElementById('currentDate').innerText = dateStr;
+
+        // Auto-llenar el input de fecha si está vacío
+        const inputFecha = document.getElementById('fechaRegistro');
+        if (!inputFecha.value) {
+            inputFecha.value = now.toISOString().slice(0, 16);
+        }
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>

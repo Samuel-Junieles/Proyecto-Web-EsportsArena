@@ -54,4 +54,32 @@ public class EquiposController : Controller
 
         return RedirectToAction("Index");
     }
+
+    [HttpPost]
+    public IActionResult Actualizar([FromBody] Equipo datosNuevos)
+    {
+        var equipoDB = _equipoService.ObtenerTodos().FirstOrDefault(e => e.Id == datosNuevos.Id);
+        if (equipoDB == null) return Json(new { success = false });
+
+        // Solo actualizamos lo permitido
+        equipoDB.NombreEquipo = datosNuevos.NombreEquipo;
+        equipoDB.JuegoPrincipal = datosNuevos.JuegoPrincipal;
+
+        _equipoService.Actualizar(equipoDB); // Asegúrate que tu Service tenga este método
+        return Json(new { success = true });
+    }
+
+    [HttpPost]
+    public IActionResult Eliminar(int id)
+    {
+        try
+        {
+            _equipoService.Eliminar(id); // Asegúrate que tu Service tenga este método
+            return Json(new { success = true });
+        }
+        catch
+        {
+            return Json(new { success = false });
+        }
+    }
 }
