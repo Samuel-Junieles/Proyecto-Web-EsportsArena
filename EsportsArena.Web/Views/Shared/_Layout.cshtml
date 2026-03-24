@@ -7,98 +7,178 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --sidebar-bg: #0b0e14;
-            --main-bg: #12171e;
-            --accent: #007bff;
+            --bg-main: #12171e; 
+            --neu-upper: #1b222c; 
+            --neu-lower: #090c10; 
+            --accent-cyan: #00f2fe; 
+            --accent-purple: #7000ff; 
+            --text-gray: #8b949e;
         }
 
         body {
+            background-color: var(--bg-main);
+            color: #e6edf3;
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
             display: flex;
             min-height: 100vh;
-            background-color: var(--main-bg);
-            color: white;
-            margin: 0;
-            overflow-x: hidden;
         }
 
-        /* Sidebar Lateral Izquierdo */
         #sidebar {
-            width: 280px;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid #2d333b;
+            width: 270px;
+            background-color: var(--bg-main);
+            border-right: 1px solid rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
             position: fixed;
             height: 100vh;
-            transition: all 0.3s;
+            box-shadow: 10px 0 20px var(--neu-lower);
+            z-index: 100;
         }
 
-        /* Contenido Principal */
-        #main-wrapper {
-            flex-grow: 1;
-            margin-left: 280px;
-            padding: 20px;
-            width: calc(100% - 280px);
+        .brand-section {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
         }
+
+            .brand-section h4 {
+                font-family: 'Orbitron', sans-serif;
+                background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            }
 
         .nav-link {
-            color: #8b949e;
-            font-size: 0.95rem;
+            color: var(--text-gray);
+            margin: 10px 18px;
             padding: 12px 20px;
-            border-radius: 8px;
-            margin: 4px 10px;
-            transition: 0.2s;
+            border-radius: 14px;
+            transition: 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
         }
 
+            .nav-link i {
+                margin-right: 12px;
+                font-size: 1.1rem;
+            }
+
             .nav-link:hover {
-                color: white;
-                background: rgba(255,255,255,0.05);
+                color: var(--accent-cyan);
+                background: var(--bg-main);
+                box-shadow: 5px 5px 10px var(--neu-lower), -3px -3px 10px var(--neu-upper);
+                transform: translateY(-2px);
             }
 
             .nav-link.active {
                 color: white;
-                background: var(--accent);
-                font-weight: bold;
+                box-shadow: inset 4px 4px 8px var(--neu-lower), inset -3px -3px 8px var(--neu-upper);
+                border: 1px solid rgba(0, 242, 254, 0.1);
             }
 
-            .nav-link i {
-                margin-right: 10px;
+        #main-wrapper {
+            flex-grow: 1;
+            margin-left: 270px;
+            padding: 40px;
+            width: calc(100% - 270px);
+        }
+
+        .user-card-neu {
+            margin: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            background: var(--bg-main);
+            box-shadow: inset 5px 5px 10px var(--neu-lower), inset -5px -5px 10px var(--neu-upper);
+        }
+
+        .btn-logout {
+            border: none;
+            border-radius: 10px;
+            background: var(--bg-main);
+            color: #ff4d4d;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 4px 4px 8px var(--neu-lower), -2px -2px 8px var(--neu-upper);
+            transition: 0.2s;
+        }
+
+            .btn-logout:hover {
+                box-shadow: 2px 2px 4px var(--neu-lower), -1px -1px 4px var(--neu-upper);
+                transform: scale(0.98);
             }
+
+        .neu-card {
+            background: #12171e;
+            border-radius: 25px;
+            box-shadow: 12px 12px 24px #0a0d11, -6px -6px 18px #1a212b;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .icon-circle {
+            width: 65px;
+            height: 65px;
+            background: #12171e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 6px 6px 12px #0a0d11, inset -4px -4px 10px #1a212b;
+        }
+
+        .text-muted-gamer {
+            color: #a0aec0 !important; /* Gris claro legible */
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
 
     <nav id="sidebar">
-        <div class="p-4">
-            <h4 class="text-primary fw-bold"><i class="bi bi-controller"></i> ARENA MANAGER</h4>
+        <div class="brand-section">
+            <h4 class="mb-0">ARENA</h4>
+            <small class="text-muted fw-bold" style="font-size: 0.6rem; letter-spacing: 4px;">GAMER</small>
         </div>
 
-        <div class="flex-column nav nav-pills">
-            <a class="nav-link" asp-controller="Home" asp-action="Index"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a class="nav-link" asp-controller="Usuarios" asp-action="Index"><i class="bi bi-people"></i> Usuarios</a>
-            <a class="nav-link" asp-controller="Equipos" asp-action="Index"><i class="bi bi-shield-shaded"></i> Equipos</a>
-            <a class="nav-link" asp-controller="Encuentros" asp-action="Index"><i class="bi bi-controller"></i> Encuentros</a>
-            <a class="nav-link" asp-controller="Torneos" asp-action="Index"><i class="bi bi-trophy"></i> Torneos</a>
-            <a class="nav-link" asp-controller="Reportes" asp-action="Index"><i class="bi bi-file-earmark-pdf"></i> Reportes</a>
+        <div class="nav flex-column mb-auto">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")"
+               asp-controller="Home" asp-action="Index"><i class="bi bi-grid-fill"></i> DASHBOARD</a>
+
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Usuarios" ? "active" : "")"
+               asp-controller="Usuarios" asp-action="Index"><i class="bi bi-person-lines-fill"></i> USUARIOS</a>
+
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Equipos" ? "active" : "")"
+               asp-controller="Equipos" asp-action="Index"><i class="bi bi-shield-shaded"></i> EQUIPOS</a>
+
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Encuentros" ? "active" : "")"
+               asp-controller="Encuentros" asp-action="Index"><i class="bi bi-lightning-fill"></i> ENCUENTROS</a>
+
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Torneos" ? "active" : "")"
+               asp-controller="Torneos" asp-action="Index"><i class="bi bi-trophy-fill"></i> TORNEOS</a>
+
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reportes" ? "active" : "")"
+               asp-controller="Reportes" asp-action="Index"><i class="bi bi-file-earmark-bar-graph"></i> REPORTES</a>
         </div>
 
-        <div class="mt-auto p-3 border-top border-secondary">
-            <div class="d-flex align-items-center">
-                <div class="ms-2">
-                    <p class="mb-0 small text-muted">Sesión iniciada:</p>
-                    <strong class="text-info">@Context.Session.GetString("UsuarioLogueado")</strong>
-                </div>
+        <div class="user-card-neu mt-auto">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-circle-fill text-success me-2" style="font-size: 0.5rem;"></i>
+                <span class="small text-white-50">@Context.Session.GetString("UsuarioLogueado")</span>
             </div>
-            <a asp-controller="Login" asp-action="Salir" class="btn btn-outline-danger btn-sm w-100 mt-2">Cerrar Sesión</a>
+            <a asp-controller="Login" asp-action="Salir" class="btn btn-logout w-100 py-2">
+                <i class="bi bi-power"></i> CERRAR SESIÓN
+            </a>
         </div>
     </nav>
 
     <div id="main-wrapper">
-        <div class="container-fluid">
-            @RenderBody()
-        </div>
+        @RenderBody()
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

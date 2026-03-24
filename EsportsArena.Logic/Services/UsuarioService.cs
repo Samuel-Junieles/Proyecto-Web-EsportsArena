@@ -35,5 +35,39 @@ namespace EsportsArena.Logic.Services
             return _usuarioDAO.ObtenerTodos()
                 .FirstOrDefault(u => u.Username == username && u.PasswordHash == hashIntento);
         }
+
+        public bool Actualizar(Usuario usuario)
+        {
+            try
+            {
+                _usuarioDAO.Actualizar(usuario);
+                _usuarioDAO.Guardar();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool Eliminar(int id)
+        {
+            try
+            {
+                // El DAO genérico se encarga de buscar y remover
+                _usuarioDAO.Eliminar(id);
+                _usuarioDAO.Guardar(); // CRÍTICO: Sin esto, los cambios no se envían a MySQL
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public Usuario ObtenerPorId(int id)
+        {
+            return _usuarioDAO.ObtenerPorId(id);
+        }
     }
 }
