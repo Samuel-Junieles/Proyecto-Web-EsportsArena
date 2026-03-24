@@ -1,53 +1,185 @@
 ﻿@model List<EsportsArena.Entities.Models.Equipo>
 
-<div class="container mt-5">
-    <div class="card bg-dark text-white border-warning">
-        <div class="card-header border-warning text-center">
-            <h3 class="text-warning fw-bold">CONFIGURAR BATALLA</h3>
-        </div>
-        <div class="card-body">
-            @if (TempData["Error"] != null)
-            {
-                <div class="alert alert-danger">@TempData["Error"]</div>
-            }
+@{
+    ViewData["Title"] = "Configurar Batalla";
+}
 
-            <form asp-action="GuardarEncuentro" method="post">
-                <div class="row text-center align-items-center">
-                    <div class="col-md-5">
-                        <label class="text-info small fw-bold">LOCAL</label>
-                        <select name="Equipo1Id" class="form-select bg-black text-white border-secondary">
-                            @foreach (var eq in Model)
-                            {
-                                <option value="@eq.Id">@eq.NombreEquipo</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <h1 class="text-danger fw-bold">VS</h1>
-                    </div>
-                    <div class="col-md-5">
-                        <label class="text-info small fw-bold">VISITANTE</label>
-                        <select name="Equipo2Id" class="form-select bg-black text-white border-secondary">
-                            @foreach (var eq in Model)
-                            {
-                                <option value="@eq.Id">@eq.NombreEquipo</option>
-                            }
-                        </select>
-                    </div>
+<div class="container animate__animated animate__fadeInUp mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="neu-card p-4">
+
+                <div class="text-end mb-3 px-2">
+                    <span id="liveClock" class="small fw-bold text-info" style="letter-spacing: 2px; text-shadow: 0 0 8px rgba(0,242,254,0.4);">00:00:00</span>
                 </div>
 
-                <div class="mt-4">
-                    <label class="text-info small fw-bold">SELECCIONA FECHA Y HORA</label>
-                    <input type="datetime-local" name="FechaEncuentro"
-                           class="form-control bg-black text-white border-secondary"
-                           required />
+                <div class="text-center mb-5">
+                    <div class="icon-circle mb-3">
+                        <i class="bi bi-crosshair2 text-danger fs-1"></i>
+                    </div>
+                    <h3 class="fw-bold text-white">CONFIGURAR <span style="color: var(--accent-cyan)">BATALLA</span></h3>
+                    <p class="text-light opacity-75 small">Define los contendientes y el tiempo de ejecución.</p>
                 </div>
 
-                <div class="d-flex gap-2 mt-4">
-                    <button type="submit" class="btn btn-warning w-100 fw-bold">AGENDAR ENCUENTRO</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary w-100">CANCELAR</a>
-                </div>
-            </form>
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger bg-dark border-danger text-danger animate__animated animate__shakeX">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+                    </div>
+                }
+
+                <form asp-action="GuardarEncuentro" method="post" class="p-2">
+                    <div class="row align-items-center mb-5">
+                        <div class="col-md-5">
+                            <label class="form-label text-center d-block fw-bold mb-3" style="color: #00f2fe; font-size: 0.85rem; text-shadow: 0 0 5px rgba(0,242,254,0.3);">
+                                <i class="bi bi-house-door-fill me-1"></i> LOCAL
+                            </label>
+                            <select name="Equipo1Id" class="form-select neu-input text-center fs-5 py-3">
+                                <option value="" disabled selected>-- SELECCIONAR EQUIPO --</option>
+                                @foreach (var eq in Model)
+                                {
+                                    <option value="@eq.Id">@eq.NombreEquipo</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-2 text-center py-3">
+                            <h1 class="vs-text">VS</h1>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label class="form-label text-center d-block fw-bold mb-3" style="color: #00f2fe; font-size: 0.85rem; text-shadow: 0 0 5px rgba(0,242,254,0.3);">
+                                <i class="bi bi-airplane-fill me-1"></i> VISITANTE
+                            </label>
+                            <select name="Equipo2Id" class="form-select neu-input text-center fs-5 py-3">
+                                <option value="" disabled selected>-- SELECCIONAR EQUIPO --</option>
+                                @foreach (var eq in Model)
+                                {
+                                    <option value="@eq.Id">@eq.NombreEquipo</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5 justify-content-center">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold mb-2 d-block text-center" style="color: #00f2fe; font-size: 0.85rem; text-shadow: 0 0 5px rgba(0,242,254,0.3);">
+                                <i class="bi bi-calendar-check me-1"></i> FECHA Y HORA DEL ENCUENTRO
+                            </label>
+                            <input type="datetime-local"
+                                   name="FechaEncuentro"
+                                   id="inputFecha"
+                                   class="form-control neu-input text-center"
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <a asp-action="Index" class="btn btn-outline-secondary w-100 py-3 fw-bold" style="border-radius: 15px; border-color: #333;">
+                                <i class="bi bi-arrow-left me-2"></i>CANCELAR
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-neu text-info w-100 py-3 fw-bold">
+                                <i class="bi bi-lightning-charge-fill me-2"></i>AGENDAR DUELO
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .vs-text {
+        font-size: 3rem;
+        font-weight: 900;
+        color: #f25c54;
+        font-style: italic;
+        text-shadow: 0 0 20px rgba(242, 92, 84, 0.4);
+        margin: 0;
+    }
+
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        background: #12171e;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        box-shadow: 6px 6px 12px #090c10, -4px -4px 12px #1b222c;
+        border: 1px solid rgba(242, 92, 84, 0.1);
+    }
+
+    .neu-input {
+        background: #0d1117 !important;
+        border: 1px solid #30363d !important;
+        color: #fff !important;
+        border-radius: 15px;
+        box-shadow: inset 4px 4px 8px #05070a, inset -2px -2px 8px #161b22;
+        transition: all 0.3s ease;
+    }
+
+        .neu-input:focus {
+            border-color: var(--accent-cyan) !important;
+            box-shadow: inset 2px 2px 5px #000, 0 0 10px rgba(0, 242, 254, 0.2);
+            outline: none;
+        }
+
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+    }
+
+    /* Estilo base del select */
+    .neu-input {
+        appearance: none; /* Quita la flecha por defecto */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2300f2fe' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        /* Estilo para las opciones cuando el select está abierto */
+        .neu-input option {
+            background-color: #1a202c; /* Fondo oscuro sólido para las opciones */
+            color: #00f2fe;
+            padding: 15px;
+            font-weight: bold;
+        }
+
+        /* Efecto Hover al pasar por encima */
+        .neu-input:hover {
+            border-color: var(--accent-cyan) !important;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3), inset 2px 2px 5px #000;
+        }
+
+        /* Estilo para cuando el campo está enfocado */
+        .neu-input:focus {
+            outline: none;
+            border-color: #f25c54 !important; /* Cambia a rojo cuando seleccionas */
+        }
+</style>
+
+<script>
+    function updateLiveClock() {
+        const now = new Date();
+        document.getElementById('liveClock').innerText = now.toLocaleTimeString();
+    }
+
+    // Inicializar fecha mínima (hoy) para el input
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('inputFecha').min = now.toISOString().slice(0, 16);
+
+    setInterval(updateLiveClock, 1000);
+    updateLiveClock();
+</script>
