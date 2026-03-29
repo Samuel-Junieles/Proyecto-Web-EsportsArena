@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Architecture-4--Layer-00f2fe?style=for-the-badge" />
   &nbsp;&nbsp;
-  <img src="https://img.shields.io/badge/.NET%208.0-512BD4?style=for-the-badge&logo=.net&logoColor=white" />
+  <img src="https://img.shields.io/badge/.NET%209.0-512BD4?style=for-the-badge&logo=.net&logoColor=white" />
   &nbsp;&nbsp;
   <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" />
   &nbsp;&nbsp;
