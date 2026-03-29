@@ -1,6 +1,7 @@
 using EsportsArena.Data.Context;
 using EsportsArena.Data.DAO;
 using EsportsArena.Data.Interface;
+using EsportsArena.Entities.Models;
 using EsportsArena.Logic.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,6 +13,7 @@ builder.Services.AddControllersWithViews();
 
 // Configuración del GenericDAO
 builder.Services.AddScoped(typeof(IGenericDAO<>), typeof(GenericDAO<>));
+builder.Services.AddScoped<IGenericDAO<Patrocinador>, GenericDAO<Patrocinador>>();
 
 // Registro de los Servicios de Lógica De Negocio
 builder.Services.AddScoped<UsuarioService>();
@@ -19,6 +21,7 @@ builder.Services.AddScoped<EncuentroService>();
 builder.Services.AddScoped<EquipoService>();
 builder.Services.AddScoped<TorneoService>();
 builder.Services.AddScoped<ReporteService>();
+builder.Services.AddScoped<PatrocinadorService>();
 
 // Habilitar Sesiones para el Login
 builder.Services.AddSession();

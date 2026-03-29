@@ -21,10 +21,8 @@
                 }]
             },
             options: {
-                // --- CONFIGURACIÓN CRÍTICA PARA TAMAÑO ---
                 responsive: true,
                 maintainAspectRatio: false,
-                // ------------------------------------------
                 plugins: {
                     legend: { labels: { color: '#ffffff', font: { size: 14 } } }
                 },
@@ -49,10 +47,8 @@
                 }]
             },
             options: {
-                // --- CONFIGURACIÓN CRÍTICA PARA TAMAÑO ---
                 responsive: true,
                 maintainAspectRatio: false,
-                // ------------------------------------------
                 plugins: {
                     legend: { position: 'bottom', labels: { color: '#ffffff' } }
                 }

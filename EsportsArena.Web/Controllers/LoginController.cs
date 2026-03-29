@@ -40,7 +40,6 @@ namespace EsportsArena.Web.Controllers
             }
         }
 
-        // POST: Login/Ingresar (Validar credenciales)
         [HttpPost]
         public IActionResult Ingresar(string username, string password)
         {
@@ -58,6 +57,14 @@ namespace EsportsArena.Web.Controllers
             TempData["LoginError"] = "Usuario o contraseña incorrectos. Verifica tus credenciales.";
 
             return View("Index");
+        }
+
+        [HttpGet]
+        public IActionResult Salir()
+        {
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("Index", "Login");
         }
 
     }
