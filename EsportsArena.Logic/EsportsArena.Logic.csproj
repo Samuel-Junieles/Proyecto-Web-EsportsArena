@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BouncyCastle.NetCore" Version="2.2.1" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="itext.bouncy-castle-adapter" Version="9.5.0" />
+    <PackageReference Include="itext7" Version="9.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\EsportsArena.Data\EsportsArena.Data.csproj" />
     <ProjectReference Include="..\EsportsArena.Entities\EsportsArena.Entities.csproj" />
   </ItemGroup>

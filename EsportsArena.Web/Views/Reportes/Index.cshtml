@@ -1,15 +1,58 @@
-﻿<div class="container-fluid text-center">
-    <h2 class="text-danger fw-bold"><i class="bi bi-file-earmark-pdf"></i> CENTRO DE REPORTES</h2>
-    <div class="row mt-5">
-        <div class="col-md-6">
-            <button class="btn btn-outline-danger p-5 w-100">
-                <i class="bi bi-file-pdf display-4"></i><br>Exportar PDF
-            </button>
-        </div>
-        <div class="col-md-6">
-            <button class="btn btn-outline-success p-5 w-100">
-                <i class="bi bi-file-excel display-4"></i><br>Exportar Excel
-            </button>
+﻿@{
+    ViewData["Title"] = "Centro de Inteligencia";
+}
+
+<div class="container animate__animated animate__fadeIn">
+    <div class="text-center mb-5 mt-4">
+        <h2 class="display-6 fw-bold text-white">CENTRO DE <span style="color: var(--accent-cyan)">REPORTES</span></h2>
+        <p class="text-white small" style="letter-spacing: 3px;">EXPORTACIÓN DE DATOS E INDICADORES</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-5 mb-4">
+            <div class="neu-card p-4 text-center h-100">
+                <div class="report-icon mb-3 mx-auto">
+                    <i class="bi bi-people-fill text-info fs-1"></i>
+                </div>
+                <h4 class="text-white fw-bold">BASE DE DATOS DE USUARIOS</h4>
+                <p class="text-white small mb-4">Exporta la lista completa de Usuarios.</p>
+
+                <div class="d-grid gap-3">
+                    <a asp-action="ExportarUsuariosExcel" class="btn btn-neu text-success fw-bold py-2">
+                        <i class="bi bi-file-earmark-excel-fill me-2"></i>DESCARGAR EXCEL
+                    </a>
+                    <a asp-action="ExportarUsuariosPdf" class="btn btn-neu text-danger fw-bold py-2">
+                        <i class="bi bi-file-earmark-pdf-fill me-2"></i>GENERAR PDF
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .report-icon {
+        width: 80px;
+        height: 80px;
+        background: #12171e;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 6px 6px 12px #090c10, -4px -4px 12px #1b222c;
+        border: 1px solid rgba(0, 242, 254, 0.1);
+    }
+
+    .btn-neu {
+        background: #161b22;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 4px 4px 8px #090c10, -2px -2px 8px #212832;
+        transition: all 0.3s ease;
+    }
+
+        .btn-neu:hover {
+            box-shadow: inset 2px 2px 5px #000;
+            transform: translateY(2px);
+        }
+</style>

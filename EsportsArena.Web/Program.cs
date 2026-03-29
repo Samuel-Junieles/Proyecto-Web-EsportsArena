@@ -18,6 +18,7 @@ builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<EncuentroService>();
 builder.Services.AddScoped<EquipoService>();
 builder.Services.AddScoped<TorneoService>();
+builder.Services.AddScoped<ReporteService>();
 
 // Habilitar Sesiones para el Login
 builder.Services.AddSession();
