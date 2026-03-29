@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "Alianzas Estratégicas";
+}
+
+<div class="container-fluid animate__animated animate__fadeIn">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="display-6 fw-bold text-white mb-0">NUESTROS <span style="color: var(--accent-cyan)">SPONSORS</span></h2>
+            <p style="color: #a0aec0; letter-spacing: 2px;">GESTIÓN DE PATROCINIOS</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <button onclick="cargarPatrocinadores()" class="btn btn-neu text-info fw-bold py-2 px-4">
+                <i class="bi bi-arrow-clockwise me-2"></i>ACTUALIZAR LISTA
+            </button>
+        </div>
+    </div>
+
+    <div class="neu-card p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-dark align-middle mb-0" id="tablaPatrocinadores">
+                <thead>
+                    <tr style="background: rgba(0,0,0,0.2);">
+                        <th class="ps-4 py-4 text-muted small">ID</th>
+                        <th class="py-4 text-white">PATROCINADOR</th>
+                        <th class="py-4 text-white">EMPRESA</th>
+                        <th class="py-4 text-white text-center">INVERSIÓN</th>
+                        <th class="py-4 text-white">CONTACTO</th>
+                        <th class="py-4 text-center text-white">ESTADO</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla">
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <div class="spinner-border text-info" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .amount-badge {
+        background: rgba(0, 242, 254, 0.05);
+        color: #00f2fe;
+        padding: 5px 12px;
+        border-radius: 10px;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+    }
+
+    .status-active {
+        color: #48bb78;
+        background: rgba(72, 187, 120, 0.1);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+</style>
+
+<script>
+    function cargarPatrocinadores() {
+        const cuerpo = document.getElementById('cuerpoTabla');
+
+        fetch('/api/PatrocinadoresApi')
+            .then(response => response.json())
+            .then(data => {
+                cuerpo.innerHTML = '';
+                if (data.length === 0) {
+                    cuerpo.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted italic">
+                                <i class="bi bi-info-circle me-2"></i> No hay patrocinadores registrados en la API.
+                            </td>
+                        </tr>`;
+                    return;
+                }
+
+                data.forEach(p => {
+                    const fila = `
+                        <tr class="border-bottom border-secondary border-opacity-10 animate__animated animate__fadeIn">
+                            <td class="ps-4 text-muted">#${p.id}</td>
+                            <td>
+                                <div class="fw-bold text-white">${p.nombre}</div>
+                            </td>
+                            <td class="text-light opacity-75">${p.empresa}</td>
+                            <td class="text-center">
+                                <span class="amount-badge">$${p.montoInversion.toLocaleString()}</span>
+                            </td>
+                            <td>
+                                <div class="small"><i class="bi bi-envelope-at me-2 text-info"></i>${p.emailContacto}</div>
+                            </td>
+                            <td class="text-center">
+                                <span class="status-active">${p.estado}</span>
+                            </td>
+                        </tr>
+                    `;
+                    cuerpo.innerHTML += fila;
+                });
+            })
+            .catch(error => {
+                console.error('Error API:', error);
+                cuerpo.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Error al conectar con la API</td></tr>`;
+            });
+    }
+    document.addEventListener('DOMContentLoaded', cargarPatrocinadores);
+</script>
