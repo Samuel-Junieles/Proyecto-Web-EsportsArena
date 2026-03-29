@@ -9,7 +9,6 @@
                 $"Ganó {local}",
                 $"Ganó {visitante}",
                 "Empate Técnico",
-                $"Victoria aplastante de {local}",
             };
 
             Random ran = new Random();
