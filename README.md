@@ -64,6 +64,10 @@ Para poner en marcha la Arena de Esports en tu entorno local, sigue estos pasos:
 * **Desarrollador:** Estudiante de Ingeniería de Software (7mo Semestre) Samuel Junieles.
 * **Proyecto:** Desarrollo de Aplicaciones Web.
 * **Institución:** Facultad de Ingeniería.
+  
+---
 
+## ⚖️ Licencia
+Este proyecto está bajo la **Licencia MIT**. Para más detalles, consulta el archivo [LICENSE](LICENSE) incluido en este repositorio.
 ---
 <p align="center">Sistema desarrollado para la excelencia en la gestión de eSports ⚡</p>
